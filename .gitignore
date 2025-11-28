@@ -1,7 +1,7 @@
-backend/vendor/
 *.exe
 *.log
 .env
 .DS_Store
+
 
 backend/vendor/
