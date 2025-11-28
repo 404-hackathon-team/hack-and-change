@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/lpernett/godotenv"
@@ -13,8 +12,8 @@ type Config struct {
 
 	DBUser string
 	DBPassword string
-	DBAddress string
 	DBName string
+	DBHost string
 }
 
 var Envs = initConfig()
@@ -23,13 +22,12 @@ func initConfig() Config {
 	godotenv.Load()
 
 	return Config {
-		PublicHost: getEnv("PUBLIC_HOST", "http://localhost"),
+		PublicHost: getEnv("PUBLIC_HOST", "localhost"),
 		Port: getEnv("PORT", "8080"),
-		DBUser: getEnv("DB_USER", "root"),
-		DBPassword: getEnv("DB_PASSWORD", "mypassword"),
-		DBAddress: fmt.Sprintf("%s:%s", getEnv("DB_HOST", "127.0.0.1"), 
-		getEnv("DB_PORT", "3306")),
-		DBName: getEnv("DB_NAME", "ecom"),
+		DBUser: getEnv("DB_USER", "postgres"),
+		DBPassword: getEnv("DB_PASSWORD", "password"),
+		DBName: getEnv("DB_NAME", "db"),
+		DBHost: getEnv("DB_HOST", "db"),
 	}
 }
 

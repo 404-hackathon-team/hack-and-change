@@ -16,4 +16,6 @@ FROM alpine:3.18
 WORKDIR /app
 COPY --from=builder /app/server .
 
+COPY ./cmd/migrations ./migrations
+
 CMD ["./server"]

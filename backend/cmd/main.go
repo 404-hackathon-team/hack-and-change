@@ -2,31 +2,32 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
-
-	"github.com/go-sql-driver/mysql"
 
 	"github.com/Jeno7u/studybud/cmd/api"
 	"github.com/Jeno7u/studybud/config"
 	"github.com/Jeno7u/studybud/db"
+	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/pressly/goose/v3"
 )
 
-
 func main() {
-	db, err := db.NewMySQLStorate(mysql.Config{
-		User: config.Envs.DBUser,
-		Passwd: config.Envs.DBPassword,
-		Addr: config.Envs.DBAddress,
-		DBName: config.Envs.DBName,
-		Net: "tcp",
-		AllowNativePasswords: true,
-		ParseTime: true,
-	})
+	conn := fmt.Sprintf("postgres://%s:%s@%s:5432/%s?sslmode=disable",
+		config.Envs.DBUser,
+		config.Envs.DBPassword,
+		config.Envs.DBHost,
+		config.Envs.DBName,
+	)
+
+	database, err := db.NewPostgresStorage(conn)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer database.Close()
 
-	initStorage(db)
+	migrateDatabase(database)
+	initStorage(database)
 
 	server := api.NewAPIServer(":8080", nil)
 
@@ -35,11 +36,21 @@ func main() {
 	}
 }
 
-func initStorage(db *sql.DB) {
-	err := db.Ping()
+// ping db
+func initStorage(database *sql.DB) {
+	err := database.Ping()
 	if err != nil {
 		log.Fatal("tried to ping db, got", err)
 	}
 
 	log.Println("DB: Successfully connected")
+}
+
+// migrate db
+func migrateDatabase(database *sql.DB) {
+	goose.SetDialect("postgres")
+
+	if err := goose.Up(database, "migrations"); err != nil {
+		log.Fatalf("migration failed: %v", err)
+	}
 }

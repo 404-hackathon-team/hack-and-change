@@ -1,9 +1,6 @@
-version: "3.9"
-
 services:
     db:
         image: postgres:16
-        container_name: myproject_postgres
         restart: always
         environment:
             POSTGRES_USER: ${DB_USER}
@@ -13,20 +10,20 @@ services:
             - "5432:5432"
         volumes:
             - db_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+            interval: 2s
+            timeout: 3s
+            retries: 10
 
     api:
         build: .
-        container_name: myproject_api
         restart: on-failure
-        environment:
-            DB_USER: ${DB_USER}
-            DB_PASSWORD: ${DB_PASSWORD}
-            DB_NAME: ${DB_NAME}
-            DB_HOST: db
+        depends_on:
+            db:
+                condition: service_healthy
         ports:
             - "8080:8080"
-        depends_on:
-            - db
 
 volumes:
     db_data:

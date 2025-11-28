@@ -2,17 +2,22 @@ package db
 
 import (
 	"database/sql"
-	"log"
+	"fmt"
 
-	"github.com/go-sql-driver/mysql"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-func NewMySQLStorate(cfg mysql.Config) (*sql.DB, error) {
-	db, err := sql.Open("mysql", cfg.FormatDSN())
-
+func NewPostgresStorage(connString string) (*sql.DB, error) {
+	db, err := sql.Open("pgx", connString)
 	if err != nil {
-		log.Fatal("trying to open connection, got", err)
+		return nil, fmt.Errorf("open postgres connection: %w", err)
 	}
-	
+
+	// verify connection
+	if err := db.Ping(); err != nil {
+		db.Close()
+		return nil, fmt.Errorf("ping postgres: %w", err)
+	}
+
 	return db, nil
 }
