@@ -30,7 +30,7 @@ func main() {
 	initStorage(database)
 
 	port := fmt.Sprintf(":%s", config.Envs.Port)
-	server := api.NewAPIServer(port, nil)
+	server := api.NewAPIServer(port, database)
 
 	if err := server.Run(); err != nil {
 		log.Fatal(err)

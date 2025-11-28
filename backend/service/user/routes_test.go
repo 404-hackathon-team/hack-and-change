@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/Jeno7u/studybud/types"
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
 func TestUserServiceHandlers(t *testing.T) {
@@ -31,9 +31,9 @@ func TestUserServiceHandlers(t *testing.T) {
 		}
 
 		rr := httptest.NewRecorder()
-		router := mux.NewRouter()
-
-		router.HandleFunc("/register", handler.handleRegister)
+		gin.SetMode(gin.TestMode)
+		router := gin.New()
+		handler.RegisterRoutes(router)
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusBadRequest {
@@ -56,9 +56,9 @@ func TestUserServiceHandlers(t *testing.T) {
 		}
 
 		rr := httptest.NewRecorder()
-		router := mux.NewRouter()
-
-		router.HandleFunc("/register", handler.handleRegister)
+		gin.SetMode(gin.TestMode)
+		router := gin.New()
+		handler.RegisterRoutes(router)
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusCreated {
@@ -81,9 +81,9 @@ func TestUserServiceHandlers(t *testing.T) {
 		}
 
 		rr := httptest.NewRecorder()
-		router := mux.NewRouter()
-
-		router.HandleFunc("/register", handler.handleRegister)
+		gin.SetMode(gin.TestMode)
+		router := gin.New()
+		handler.RegisterRoutes(router)
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusCreated {
