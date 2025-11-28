@@ -14,5 +14,15 @@ docker-compose up --build
 go test -v ./...
 ```
 
-Миграция (работаю над этим)
+Миграция происходит при запуске сервера через goose
+
+Установка goose
+```bash
+go install github.com/pressly/goose/v3/cmd/goose@latest
+```
+
+Создать новый файл миграции 
+```
+goose create [migration_name] sql
+```
 
