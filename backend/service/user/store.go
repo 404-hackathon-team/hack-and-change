@@ -15,8 +15,25 @@ func NewStore(db *sql.DB) *Store {
 	return &Store{db: db}
 }
 
+func scanRowIntoUser(rows *sql.Rows) (*types.User, error) {
+	user := new(types.User)
+
+	err := rows.Scan(
+		&user.ID,
+		&user.FirstName,
+		&user.LastName,
+		&user.Email,
+		&user.Password,
+		&user.CreatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+} 
 func (s *Store) GetUserByEmail(email string) (*types.User, error) {
-	rows, err := s.db.Query("SELECT id, first_name, last_name, email, password, created_at FROM users WHERE email = $1", email)
+	rows, err := s.db.Query("SELECT * FROM users WHERE email = $1", email)
 	if err != nil {
 		return nil, err
 	}
@@ -36,24 +53,33 @@ func (s *Store) GetUserByEmail(email string) (*types.User, error) {
 	return u, nil
 }
 
-func scanRowIntoUser(rows *sql.Rows) (*types.User, error) {
-	user := new(types.User)
-
-	err := rows.Scan(
-		&user.ID,
-		&user.FirstName,
-		&user.LastName,
-		&user.Email,
-		&user.Password,
-		&user.CreatedAt,
-	)
+func (s *Store)  GetUserById(id int) (*types.User, error) {	
+	rows, err := s.db.Query("SELECT * FROM users WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
 
-	return user, nil
-} 
+	u := new(types.User)
+	for rows.Next() {
+		u, err = scanRowIntoUser(rows)
+		if err != nil {
+			return nil, err
+		}
+	}
 
-func (s *Store)  GetUserById(id int) (*types.User, error) {return nil, nil}
+	if u.ID == 0 {
+		return nil, fmt.Errorf("user not found")
+	}
 
-func (s *Store)  CreateUser(types.User) error {return nil}
+	return u, nil}
+
+func (s *Store)  CreateUser(user types.User) error {
+	_, err := s.db.Exec(`INSERT INTO users (firstName, lastName, email, password)
+	VALUES ($1, $2, $3, $4)`, user.FirstName, user.LastName, user.Email, user.Password)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

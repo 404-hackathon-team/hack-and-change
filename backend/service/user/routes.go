@@ -2,7 +2,6 @@ package user
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/Jeno7u/studybud/service/auth"
 	"github.com/Jeno7u/studybud/types"
@@ -25,7 +24,26 @@ func (h *Handler) RegisterRoutes(router gin.IRouter) {
 }
 
 func (h *Handler) handleLogin(c *gin.Context) {
-	c.Status(http.StatusOK)
+	// get JSON payload
+	var payload types.LoginUserPayload
+	if err := c.BindJSON(&payload); err != nil {
+		utils.WriteError(c.Writer, 400, fmt.Errorf("error during JSON converting, %v", err))
+		return
+	}
+
+	// validate the payload
+	if err := utils.Vaildate.Struct(payload); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(c.Writer, 400, fmt.Errorf("invalid payload %v", errors))
+		return
+	}
+
+	// check if the user exists
+	_, err := h.store.GetUserByEmail(payload.Email)
+	if err == nil {
+		utils.WriteError(c.Writer, 400, fmt.Errorf("user with email %s already exists", payload.Email))
+		return
+	}
 }
 
 func (h *Handler) handleRegister(c *gin.Context) {
