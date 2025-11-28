@@ -29,7 +29,8 @@ func main() {
 	migrateDatabase(database)
 	initStorage(database)
 
-	server := api.NewAPIServer(":8080", nil)
+	port := fmt.Sprintf(":%s", config.Envs.Port)
+	server := api.NewAPIServer(port, database)
 
 	if err := server.Run(); err != nil {
 		log.Fatal(err)
