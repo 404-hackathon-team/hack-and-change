@@ -24,6 +24,7 @@ func NewHandler(store types.UserStore) *Handler {
 func (h *Handler) RegisterRoutes(router gin.IRouter) {
 	router.POST("/login", h.handleLogin)
 	router.POST("/register", h.handleRegister)
+	router.GET("/me", auth.AuthMiddleware(), h.handleMe)
 
 	router.GET("/get_tests", h.getTests)
 }
@@ -152,6 +153,18 @@ func (h *Handler) getTests(c *gin.Context) {
 	}
 
 	utils.WriteJSON(c.Writer, http.StatusOK, tests)
+}
+
+func (h *Handler) handleMe(c *gin.Context) {
+	userID := c.GetInt("user_id")
+
+	u, err := h.store.GetUserById(userID)
+	if err != nil {
+		utils.WriteError(c.Writer, http.StatusBadRequest, fmt.Errorf("user not found"))
+		return
+	}
+
+	c.JSON(http.StatusOK, u)
 }
 
 // func getPayload(c *gin.Context) (*types.RegisterUserPayload, error) {
