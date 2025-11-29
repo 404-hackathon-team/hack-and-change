@@ -2,6 +2,7 @@ package user
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/Jeno7u/studybud/config"
@@ -49,7 +50,8 @@ func (h *Handler) handleLogin(c *gin.Context) {
 		return
 	}
 
-	if !auth.ComparePassowrds(u.Password, []byte(payload.Password)) {
+	if !auth.ComparePassowrds([]byte(u.Password), []byte(payload.Password)) {
+		log.Println(string(u.Password), string(payload.Password))
 		utils.WriteError(c.Writer, http.StatusBadRequest, fmt.Errorf("not found, invalid email or passowrd"))
 		return
 	}
