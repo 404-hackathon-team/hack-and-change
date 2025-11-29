@@ -27,7 +27,7 @@ export default defineNuxtConfig({
     routeRules: {
         '/api/**': {
             proxy: {
-                to: 'http://localhost:8080/**',
+                to: 'http://localhost:8080/api/v1/**',
             },
         },
     },
