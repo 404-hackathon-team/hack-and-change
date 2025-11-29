@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Jeno7u/studybud/config"
 	"github.com/Jeno7u/studybud/service/auth"
 	"github.com/Jeno7u/studybud/types"
 	"github.com/Jeno7u/studybud/utils"
@@ -51,7 +52,14 @@ func (h *Handler) handleLogin(c *gin.Context) {
 		return
 	}
 
-	utils.WriteJSON(c.Writer, http.StatusOK, map[string]string{"token": ""})
+	secret := []byte(config.Envs.JWTSecret)
+	token, err := auth.CreateJWT(secret, u.ID)
+	if err != nil {
+		utils.WriteError(c.Writer, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(c.Writer, http.StatusOK, map[string]string{"token": token})
 }
 
 func (h *Handler) handleRegister(c *gin.Context) {
@@ -94,6 +102,19 @@ func (h *Handler) handleRegister(c *gin.Context) {
 		return
 	}
 
-	utils.WriteJSON(c.Writer, http.StatusCreated, map[string]string{"token": ""})
+	u, err := h.store.GetUserByEmail(payload.Email)
+	if err != nil {
+		utils.WriteError(c.Writer, http.StatusInternalServerError, err)
+		return
+	}
+	
+	secret := []byte(config.Envs.JWTSecret)
+	token, err := auth.CreateJWT(secret, u.ID)
+	if err != nil {
+		utils.WriteError(c.Writer, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(c.Writer, http.StatusCreated, map[string]string{"token": token})
 
 }
