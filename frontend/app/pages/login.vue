@@ -12,7 +12,6 @@ useSeoMeta({
 const api = useApiClient()
 
 const onSubmit = async () => {
-  // простая валидация на фронте
   if (!email.value || !password.value) {
     errorMessage.value = 'Введите логин и пароль'
     return
@@ -29,7 +28,6 @@ const onSubmit = async () => {
         password: password.value,
       },
     })
-    // если дошли сюда — статус 201, кука уже поставлена бекендом
     await navigateTo('/dashboard')
   } catch (err: any) {
     const status = err?.status || err?.response?.status
