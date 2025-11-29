@@ -1,0 +1,171 @@
+openapi: 3.0.2
+info:
+    title: Hack&Change 2025 - 404
+    version: 0.2.4
+servers:
+    - url: http://localhost:8080/api/v1
+paths:
+    /register:
+        post:
+            summary: Метод регистрации
+            security: []
+            tags:
+                - Авторизация
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/RegisterData"
+            responses:
+                "200":
+                    description: Успешная регистрация
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Token"
+                "default":
+                    description: Все нестандартное
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+    /login:
+        post:
+            summary: Метод авторизации
+            security: []
+            tags:
+                - Авторизация
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/LoginData"
+            responses:
+                "200":
+                    description: Успешная регистрация
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Token"
+                "default":
+                    description: Все нестандартное
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+
+    /get_tests:
+        get:
+            summary: Метод получения списка доступных тестов
+            security:
+                - bearerAuth: []
+            tags:
+                - Тесты
+            responses:
+                "200":
+                    description: Успешный запрос
+
+                "default":
+                    description: Все нестандартное
+
+    /get_question:
+        post:
+            summary: Метод получения первого вопроса теста
+            security:
+                - bearerAuth: []
+            tags:
+                - Тесты
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                test_id:
+                                    type: integer
+                                    example: 52
+                            required:
+                                - test_id
+            responses:
+                "200":
+                    description: Успешный запрос
+
+                "default":
+                    description: Все нестандартное
+
+    /check_question:
+        post:
+            summary: Метод проверки результата вопроса и получение следующего
+            security:
+                - bearerAuth: []
+            tags:
+                - Тесты
+
+            responses:
+                "200":
+                    description: Успешный запрос
+
+                "default":
+                    description: Все нестандартное
+
+components:
+    schemas:
+        Token:
+            type: object
+            properties:
+                token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6ItCe0LvQtdCzINCi0LjQvdGM0LrQvtCyIiwiaWF0IjoxNTE2MjM5MDIyfQ.0Hj-aQcOQr11wIr9b3y1iR6XtrZmF5b7UGBdFIGUud0
+
+        Error:
+            type: object
+            properties:
+                error:
+                    type: string
+                    example: user not found
+
+        RegisterData:
+            type: object
+            properties:
+                firstName:
+                    type: string
+                    example: Сергей
+                lastName:
+                    type: string
+                    example: Шевалдышев
+                email:
+                    type: string
+                    example: test@mail.com
+                password:
+                    type: string
+                    example: password123
+            required:
+                - firstName
+                - lastName
+                - email
+                - password
+
+        LoginData:
+            type: object
+            properties:
+                email:
+                    type: string
+                    example: test@mail.com
+                password:
+                    type: string
+                    example: password123
+            required:
+                - email
+                - password
+
+    securitySchemes:
+        bearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+
+security:
+    - bearerAuth: []
