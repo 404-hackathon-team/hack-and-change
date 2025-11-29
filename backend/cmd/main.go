@@ -13,17 +13,7 @@ import (
 )
 
 func main() {
-	conn := fmt.Sprintf("postgres://%s:%s@%s:5432/%s?sslmode=disable",
-		config.Envs.DBUser,
-		config.Envs.DBPassword,
-		config.Envs.DBHost,
-		config.Envs.DBName,
-	)
-
-	database, err := db.NewPostgresStorage(conn)
-	if err != nil {
-		log.Fatal(err)
-	}
+	database := getDatabase()
 	defer database.Close()
 
 	migrateDatabase(database)
@@ -35,6 +25,23 @@ func main() {
 	if err := server.Run(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+// get database instance
+func getDatabase() *sql.DB {
+	conn := fmt.Sprintf("postgres://%s:%s@%s:5432/%s?sslmode=disable",
+		config.Envs.DBUser,
+		config.Envs.DBPassword,
+		config.Envs.DBHost,
+		config.Envs.DBName,
+	)
+
+	database, err := db.NewPostgresStorage(conn)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return database
 }
 
 // ping db
