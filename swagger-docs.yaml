@@ -155,6 +155,22 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/Statistics"
 
+    /me:
+        get:
+            summary: Метод получения информации о пользователе
+            security:
+                - bearerAuth: []
+            tags:
+                - Статистика
+
+            responses:
+                "200":
+                    description: Успешный запрос
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/UserMe"
+
 components:
     schemas:
         Success:
@@ -236,6 +252,22 @@ components:
                 lastUpdate:
                     type: string
                     example: "25.11.25"
+
+        UserMe:
+            type: object
+            properties:
+                firstName:
+                    type: string
+                    example: Сергей
+                lastName:
+                    type: string
+                    example: Шевалдышев
+                email:
+                    type: string
+                    example: test@mail.com
+                createdAt:
+                    type: string
+                    example: 2025-11-29T17:30:30.226544Z
 
     securitySchemes:
         bearerAuth:
