@@ -133,9 +133,8 @@ func (h *Handler) handleRegister(c *gin.Context) {
 	}
 
 	utils.WriteJSON(c.Writer, http.StatusCreated, map[string]string{"token": token})
-}
 
-  	c.JSON(http.StatusCreated, gin.H{"status": "ok"})
+	c.JSON(http.StatusCreated, gin.H{"status": "ok"})
 }
 
 func (h *Handler) getTests(c *gin.Context) {
