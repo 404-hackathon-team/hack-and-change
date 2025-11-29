@@ -8,6 +8,14 @@ CREATE TABLE IF NOT EXISTS courses (
 	"steps" INTEGER ARRAY,
 	PRIMARY KEY("id")
 );
+
+INSERT INTO courses (name, students, homeworks, steps) 
+VALUES 
+    ('Course1', '{1}', '{1, 2, 3}', '{1, 2, 3}'),
+    ('Course1', '{1, 2}', '{1, 2, 3}', '{1, 2, 3}'),
+    ('Course1', '{2}', '{1, 2, 3}', '{1, 2, 3}');
+
+
 -- +goose StatementEnd
 
 -- +goose Down

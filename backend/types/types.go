@@ -8,6 +8,10 @@ type UserStore interface {
 	CreateUser(User) error
 }
 
+type CourseStore interface {
+	GetCoursesByUserRelatedID(userID int) ([]Course, error)
+}
+
 type User struct {
 	ID        int       `json:"id"`
 	FirstName string    `json:"firstName"`
@@ -45,9 +49,9 @@ type Score struct {
 type Course struct {
 	ID        int    `json:"id"`
 	Name      string `json:"name"`
-	Students  *[]int `json:"students"`
-	Homeworks *[]int `json:"homeworks"`
-	Steps     *[]int `json:"steps"`
+	Students  []int `json:"students"`
+	Homeworks []int `json:"homeworks"`
+	Steps     []int `json:"steps"`
 }
 
 type Step struct {
