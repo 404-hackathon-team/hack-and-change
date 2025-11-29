@@ -13,10 +13,12 @@ import (
 )
 
 func TestUserServiceHandlers(t *testing.T) {
-	userStore := &mockUserStore{}
+	userStore := &mockUserStore{db: map[string]*types.User{}}
 	handler := NewHandler(userStore)
 
 	t.Run("should fail if the user payload is invalid", func (t *testing.T) {
+		userStore.db = make(map[string]*types.User)
+
 		payload := types.RegisterUserPayload{
 			FirstName: "user",
 			LastName: "user",
@@ -37,11 +39,13 @@ func TestUserServiceHandlers(t *testing.T) {
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusBadRequest {
-			t.Errorf("expected status code %d, got %d", http.StatusBadRequest, rr.Code)
+			t.Errorf("expected status code %d, got %d, %v", http.StatusBadRequest, rr.Code, rr.Body)
 		}
 	})
 
 	t.Run("should correctly register the user", func (t *testing.T) {
+		userStore.db = make(map[string]*types.User)
+
 		payload := types.RegisterUserPayload{
 			FirstName: "user",
 			LastName: "user",
@@ -67,6 +71,8 @@ func TestUserServiceHandlers(t *testing.T) {
 	})
 
 	t.Run("should correctly register the user", func (t *testing.T) {
+		userStore.db = make(map[string]*types.User)
+		
 		payload := types.RegisterUserPayload{
 			FirstName: "user",
 			LastName: "user",
@@ -92,16 +98,27 @@ func TestUserServiceHandlers(t *testing.T) {
 	})
 }
 
-type mockUserStore struct {}
+type mockUserStore struct {
+	db  map[string]*types.User
+}
 
 func (m *mockUserStore) GetUserByEmail(email string) (*types.User, error) {
-	return nil, fmt.Errorf("user not found")
+    if value, ok := m.db[email]; ok {
+        return value, nil
+    }
+    return nil, fmt.Errorf("user not found")
 }
 
 func (m *mockUserStore) GetUserById(id int,) (*types.User, error) {
 	return nil, nil
 } 
 
-func (m *mockUserStore) CreateUser(types.User) (error) {
+func (m *mockUserStore) CreateUser(u types.User) error {
+	if m.db == nil {
+		m.db = make(map[string]*types.User)
+	}
+	// store a copy
+	userCopy := u
+	m.db[u.Email] = &userCopy
 	return nil
 }

@@ -65,7 +65,7 @@ func (h *Handler) handleLogin(c *gin.Context) {
 func (h *Handler) handleRegister(c *gin.Context) {
 	// get JSON payload
 	var payload types.RegisterUserPayload
-	if err := c.BindJSON(&payload); err != nil {
+	if err := c.ShouldBindJSON(&payload); err != nil {
 		utils.WriteError(c.Writer, http.StatusBadRequest, err)
 		return
 	}
@@ -118,3 +118,13 @@ func (h *Handler) handleRegister(c *gin.Context) {
 	utils.WriteJSON(c.Writer, http.StatusCreated, map[string]string{"token": token})
 
 }
+
+// func getPayload(c *gin.Context) (*types.RegisterUserPayload, error) {
+// 	// get JSON payload
+// 	var payload types.RegisterUserPayload
+// 	if err := c.ShouldBindJSON(&payload); err != nil {
+// 		utils.WriteError(c.Writer, http.StatusBadRequest, err)
+// 		return nil, err
+
+// 	return payload, nil
+// }
