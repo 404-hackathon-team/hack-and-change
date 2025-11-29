@@ -28,7 +28,7 @@ func (h *Handler) RegisterRoutes(router gin.IRouter) {
 	// Аутентификация
 	router.POST("/login", h.handleLogin)
 	router.POST("/register", h.handleRegister)
-	router.GET("/me", auth.AuthMiddleware(), h.handleMe)
+	//router.GET("/me", auth.AuthMiddleware(), h.handleMe)
 
 	// Тесты
 	router.GET("/get_tests", h.getTests)
@@ -99,15 +99,15 @@ func (h *Handler) handleLogin(c *gin.Context) {
 	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie(
 		"auth_token",
-		token, 
-		86400,     
-		"/",       
-		"",       
-		false,  
-		true,    
+		token,
+		86400,
+		"/",
+		"",
+		false,
+		true,
 	)
 
-  	c.JSON(http.StatusCreated, gin.H{"status": "ok"})
+	c.JSON(http.StatusCreated, gin.H{"status": "ok"})
 }
 
 func (h *Handler) handleRegister(c *gin.Context) {
