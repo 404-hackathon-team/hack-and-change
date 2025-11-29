@@ -2,6 +2,7 @@ package user
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -27,6 +28,7 @@ func (h *Handler) RegisterRoutes(router gin.IRouter) {
 	// Аутентификация
 	router.POST("/login", h.handleLogin)
 	router.POST("/register", h.handleRegister)
+	router.GET("/me", auth.AuthMiddleware(), h.handleMe)
 
 	// Тесты
 	router.GET("/get_tests", h.getTests)
@@ -81,7 +83,8 @@ func (h *Handler) handleLogin(c *gin.Context) {
 		return
 	}
 
-	if !auth.ComparePassowrds(u.Password, []byte(payload.Password)) {
+	if !auth.ComparePassowrds([]byte(u.Password), []byte(payload.Password)) {
+		log.Println(string(u.Password), string(payload.Password))
 		utils.WriteError(c.Writer, http.StatusBadRequest, fmt.Errorf("not found, invalid email or passowrd"))
 		return
 	}
@@ -93,7 +96,18 @@ func (h *Handler) handleLogin(c *gin.Context) {
 		return
 	}
 
-	utils.WriteJSON(c.Writer, http.StatusOK, map[string]string{"token": token})
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie(
+		"auth_token",
+		token, 
+		86400,     
+		"/",       
+		"",       
+		false,  
+		true,    
+	)
+
+  	c.JSON(http.StatusCreated, gin.H{"status": "ok"})
 }
 
 func (h *Handler) handleRegister(c *gin.Context) {
@@ -150,6 +164,8 @@ func (h *Handler) handleRegister(c *gin.Context) {
 	}
 
 	utils.WriteJSON(c.Writer, http.StatusCreated, map[string]string{"token": token})
+
+	c.JSON(http.StatusCreated, gin.H{"status": "ok"})
 }
 
 func (h *Handler) getTests(c *gin.Context) {

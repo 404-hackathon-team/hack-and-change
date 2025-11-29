@@ -56,7 +56,35 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/Error"
 
-    /get_tests:
+    /courses:
+        get:
+            summary: Метод получения списка курсов
+            security:
+                - bearerAuth: []
+            tags:
+                - Курсы
+            responses:
+                "200":
+                    description: Успешный запрос
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Course"
+
+    /last-lesson:
+        get:
+            summary: Метод получения последнего урока
+            security:
+                - bearerAuth: []
+            tags:
+                - Уроки
+            responses:
+                "200":
+                    description: Успешный запрос
+
+    /tests:
         get:
             summary: Метод получения списка доступных тестов
             security:
@@ -70,13 +98,13 @@ paths:
                 "default":
                     description: Все нестандартное
 
-    /get_question:
+    /question:
         post:
             summary: Метод получения первого вопроса теста
             security:
                 - bearerAuth: []
             tags:
-                - Тесты
+                - Вопросы
             requestBody:
                 required: true
                 content:
@@ -96,13 +124,13 @@ paths:
                 "default":
                     description: Все нестандартное
 
-    /check_question:
+    /check-question:
         post:
             summary: Метод проверки результата вопроса и получение следующего
             security:
                 - bearerAuth: []
             tags:
-                - Тесты
+                - Вопросы
 
             responses:
                 "200":
@@ -110,6 +138,38 @@ paths:
 
                 "default":
                     description: Все нестандартное
+
+    /statistics:
+        get:
+            summary: Метод получения статистики пользователя
+            security:
+                - bearerAuth: []
+            tags:
+                - Статистика
+
+            responses:
+                "200":
+                    description: Успешный запрос
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Statistics"
+
+    /me:
+        get:
+            summary: Метод получения информации о пользователе
+            security:
+                - bearerAuth: []
+            tags:
+                - Статистика
+
+            responses:
+                "200":
+                    description: Успешный запрос
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/UserMe"
 
 components:
     schemas:
@@ -160,6 +220,54 @@ components:
             required:
                 - email
                 - password
+
+        Statistics:
+            type: object
+            properties:
+                lessonsDone:
+                    type: integer
+                    example: 74
+                homeworksRequired:
+                    type: integer
+                    example: 3
+                expiredDedllines:
+                    type: integer
+                    example: 1
+
+        Course:
+            type: object
+            properties:
+                title:
+                    type: string
+                    example: Modern WebDeveloper 2025
+                lessonsDone:
+                    type: integer
+                    example: 4
+                lessonsAmount:
+                    type: integer
+                    example: 32
+                notifications:
+                    type: integer
+                    example: 3
+                lastUpdate:
+                    type: string
+                    example: "25.11.25"
+
+        UserMe:
+            type: object
+            properties:
+                firstName:
+                    type: string
+                    example: Сергей
+                lastName:
+                    type: string
+                    example: Шевалдышев
+                email:
+                    type: string
+                    example: test@mail.com
+                createdAt:
+                    type: string
+                    example: 2025-11-29T17:30:30.226544Z
 
     securitySchemes:
         bearerAuth:

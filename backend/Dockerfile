@@ -7,7 +7,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
-RUN go build -o /app/server ./cmd
+RUN go mod tidy && go build -o /app/server ./cmd
 
 # ---- Run stage ----
 FROM alpine:3.18
