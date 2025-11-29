@@ -63,7 +63,18 @@ func (h *Handler) handleLogin(c *gin.Context) {
 		return
 	}
 
-	utils.WriteJSON(c.Writer, http.StatusOK, map[string]string{"token": token})
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie(
+		"auth_token",
+		token, 
+		86400,     
+		"/",       
+		"",       
+		false,  
+		true,    
+	)
+
+  	c.JSON(http.StatusCreated, gin.H{"status": "ok"})
 }
 
 func (h *Handler) handleRegister(c *gin.Context) {
@@ -119,7 +130,18 @@ func (h *Handler) handleRegister(c *gin.Context) {
 		return
 	}
 
-	utils.WriteJSON(c.Writer, http.StatusCreated, map[string]string{"token": token})
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie(
+		"auth_token",
+		token, 
+		86400,     
+		"/",       
+		"",       
+		false,  
+		true,    
+	)
+
+  	c.JSON(http.StatusCreated, gin.H{"status": "ok"})
 }
 
 func (h *Handler) getTests(c *gin.Context) {
