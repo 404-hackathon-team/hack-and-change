@@ -23,7 +23,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/Token"
+                                $ref: "#/components/schemas/Success"
                 "default":
                     description: Все нестандартное
                     content:
@@ -48,7 +48,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/Token"
+                                $ref: "#/components/schemas/Success"
                 "default":
                     description: Все нестандартное
                     content:
@@ -113,12 +113,12 @@ paths:
 
 components:
     schemas:
-        Token:
+        Success:
             type: object
             properties:
-                token:
+                status:
                     type: string
-                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6ItCe0LvQtdCzINCi0LjQvdGM0LrQvtCyIiwiaWF0IjoxNTE2MjM5MDIyfQ.0Hj-aQcOQr11wIr9b3y1iR6XtrZmF5b7UGBdFIGUud0
+                    example: ok
 
         Error:
             type: object
