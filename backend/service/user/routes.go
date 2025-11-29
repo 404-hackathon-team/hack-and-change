@@ -23,6 +23,8 @@ func NewHandler(store types.UserStore) *Handler {
 func (h *Handler) RegisterRoutes(router gin.IRouter) {
 	router.POST("/login", h.handleLogin)
 	router.POST("/register", h.handleRegister)
+
+	router.GET("/get_tests", h.getTests)
 }
 
 func (h *Handler) handleLogin(c *gin.Context) {
@@ -59,18 +61,7 @@ func (h *Handler) handleLogin(c *gin.Context) {
 		return
 	}
 
-	c.SetSameSite(http.SameSiteLaxMode)
-	c.SetCookie(
-		"auth_token",
-		token, 
-		86400,     
-		"/",       
-		"",       
-		false,  
-		true,    
-	)
-
-  	c.JSON(http.StatusOK, gin.H{"status": "ok"})
+	utils.WriteJSON(c.Writer, http.StatusOK, map[string]string{"token": token})
 }
 
 func (h *Handler) handleRegister(c *gin.Context) {
@@ -118,7 +109,7 @@ func (h *Handler) handleRegister(c *gin.Context) {
 		utils.WriteError(c.Writer, http.StatusInternalServerError, err)
 		return
 	}
-	
+
 	secret := []byte(config.Envs.JWTSecret)
 	token, err := auth.CreateJWT(secret, u.ID)
 	if err != nil {
@@ -126,18 +117,25 @@ func (h *Handler) handleRegister(c *gin.Context) {
 		return
 	}
 
-	c.SetSameSite(http.SameSiteLaxMode)
-	c.SetCookie(
-		"auth_token",
-		token, 
-		86400,     
-		"/",       
-		"",       
-		false,  
-		true,    
-	)
-
-  	c.JSON(http.StatusCreated, gin.H{"status": "ok"})
-
+	utils.WriteJSON(c.Writer, http.StatusCreated, map[string]string{"token": token})
 }
 
+func (h *Handler) getTests(c *gin.Context) {
+	tests, err := h.store.GetTests()
+	if err != nil {
+		utils.WriteError(c.Writer, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(c.Writer, http.StatusOK, tests)
+}
+
+// func getPayload(c *gin.Context) (*types.RegisterUserPayload, error) {
+// 	// get JSON payload
+// 	var payload types.RegisterUserPayload
+// 	if err := c.ShouldBindJSON(&payload); err != nil {
+// 		utils.WriteError(c.Writer, http.StatusBadRequest, err)
+// 		return nil, err
+
+// 	return payload, nil
+// }

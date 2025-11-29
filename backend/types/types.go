@@ -6,6 +6,7 @@ type UserStore interface {
 	GetUserByEmail(email string) (*User, error)
 	GetUserById(id int) (*User, error)
 	CreateUser(User) error
+	GetTests() ([]Block, error)
 }
 
 type User struct {
