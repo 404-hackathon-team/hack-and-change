@@ -360,3 +360,28 @@ func (dp *DataProvider) DeleteFile(fileID int) error {
 	_, err = dp.db.Exec("DELETE FROM file_pathes WHERE id = $1", fileID)
 	return err
 }
+
+func (dp *DataProvider) GetFileForDownload(fileID int) (*FileRecord, []byte, error) {
+	var record FileRecord
+	err := dp.db.QueryRow(`
+        SELECT id, name, path, "fileType" 
+        FROM file_pathes 
+        WHERE id = $1
+    `, fileID).Scan(&record.ID, &record.Name, &record.Path, &record.FileType)
+
+	if err != nil {
+		return nil, nil, fmt.Errorf("file not found: %v", err)
+	}
+
+	// Читаем файл
+	fileBytes, err := os.ReadFile(record.Path)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to read file: %v", err)
+	}
+
+	return &record, fileBytes, nil
+}
+
+func ReadFile(path string) ([]byte, error) {
+	return os.ReadFile(path)
+}
