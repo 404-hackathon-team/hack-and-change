@@ -31,7 +31,7 @@ func scanRowIntoUser(rows *sql.Row) (*types.User, error) {
 	}
 
 	return user, nil
-} 
+}
 func (s *Store) GetUserByEmail(email string) (*types.User, error) {
 	var u *types.User
 
@@ -48,7 +48,7 @@ func (s *Store) GetUserByEmail(email string) (*types.User, error) {
 	return u, nil
 }
 
-func (s *Store)  GetUserById(id int) (*types.User, error) {	
+func (s *Store) GetUserById(id int) (*types.User, error) {
 	var u *types.User
 
 	row := s.db.QueryRow("SELECT * FROM users WHERE id = $1", id)
@@ -64,7 +64,7 @@ func (s *Store)  GetUserById(id int) (*types.User, error) {
 	return u, nil
 }
 
-func (s *Store)  CreateUser(user types.User) error {
+func (s *Store) CreateUser(user types.User) error {
 	_, err := s.db.Exec(`INSERT INTO users (firstName, lastName, email, password)
 	VALUES ($1, $2, $3, $4)`, user.FirstName, user.LastName, user.Email, user.Password)
 
@@ -73,4 +73,25 @@ func (s *Store)  CreateUser(user types.User) error {
 	}
 
 	return nil
+}
+
+func (s *Store) GetTests() ([]types.Block, error) {
+	testsRows, err := s.db.Query("SELECT * FROM blocks WHERE type='quiz'")
+	if err != nil {
+		return nil, err
+	}
+	defer testsRows.Close()
+
+	var blocks []types.Block
+
+	for testsRows.Next() {
+		var block types.Block
+		err := testsRows.Scan(&block.ID, &block.Type, &block.Path)
+		if err != nil {
+			return nil, err
+		}
+		blocks = append(blocks, block)
+	}
+
+	return blocks, nil
 }
