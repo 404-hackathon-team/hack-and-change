@@ -13,11 +13,12 @@ import (
 )
 
 type Handler struct {
-	store types.UserStore
+	store        types.UserStore
+	dataProvider utils.DataProvider
 }
 
-func NewHandler(store types.UserStore) *Handler {
-	return &Handler{store: store}
+func NewHandler(store types.UserStore, dataProvider utils.DataProvider) *Handler {
+	return &Handler{store: store, dataProvider: dataProvider}
 }
 
 func (h *Handler) RegisterRoutes(router gin.IRouter) {
