@@ -7,6 +7,15 @@ export default defineConfig({
     presets: [
         presetWind4(),
     ],
+    variants: [
+        (matcher) => {
+            if (!matcher.startsWith('placeholder:')) return matcher
+            return {
+                matcher: matcher.slice('placeholder:'.length),
+                selector: (s) => `${s}::placeholder`,
+            }
+        },
+    ],
     shortcuts: [
         {'btn-primary-big': 'button-primary bg-primary text-text-onAccent py-4 rounded px-16'},
         {'btn-primary': 'button-primary bg-primary text-text-onAccent py-2 rounded px-6'},
@@ -22,11 +31,11 @@ export default defineConfig({
             background: '#F5F7FA',
             surface: '#FFFFFF',
             border: '#E0E4EC',
+            disabled: '#9CA3AF',
             text: {
                 primary: '#111827',
                 onAccent: '#FFFFFF',
                 secondary: '#6B7280',
-                disabled: '#9CA3AF',
             },
             error: '#9F5D5D',
             warning: '#8E6917',

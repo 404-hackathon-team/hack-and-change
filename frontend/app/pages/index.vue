@@ -13,6 +13,11 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+useSeoMeta({
+  title: 'Главная - EduApp',
+  description: 'Добро пожаловать на цифровую образовательную платформу EduApp',
+})
+</script>
 
 <style scoped></style>

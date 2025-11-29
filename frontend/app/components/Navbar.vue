@@ -6,7 +6,7 @@
          EduApp
        </h2>
      </NuxtLink>
-     <NuxtLink class="header3" to="/app/pages/login">Войти</NuxtLink>
+     <NuxtLink class="header3" to="/login">Войти</NuxtLink>
    </nav>
  </div>
 </template>

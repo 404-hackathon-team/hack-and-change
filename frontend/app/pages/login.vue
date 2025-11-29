@@ -1,4 +1,8 @@
 <script setup lang="ts">
+useSeoMeta({
+  title: 'Вход - EduApp',
+  description: 'Страница входа в цифровую образовательную платформу EduApp',
+})
 
 </script>
 
@@ -8,8 +12,8 @@
       <h1 class="header1">Вход</h1>
       <form class="flex flex-col gap-12 items-center">
         <div class="flex flex-col gap-6 items-center">
-          <input class="bg-background border-medium text-text-secondary py-3 px-5" type="text" placeholder="Логин">
-          <input class="bg-background border-medium text-text-secondary py-3 px-5" type="text" placeholder="Пароль">
+          <input class="bg-background border-medium placeholder-text-text-secondary text-text-primary py-3 px-5" type="text" placeholder="Логин">
+          <input class="bg-background border-medium placeholder-text-text-secondary text-text-primary py-3 px-5" type="text" placeholder="Пароль">
         </div>
         <button class="btn-primary-big header4">Войти</button>
       </form>
