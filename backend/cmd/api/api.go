@@ -2,6 +2,7 @@ package api
 
 import (
 	"database/sql"
+	"github.com/Jeno7u/studybud/utils"
 	"log"
 
 	"github.com/Jeno7u/studybud/service/course"
@@ -24,7 +25,8 @@ func (s *APIServer) Run() error {
 	router_v1 := router.Group("/api/v1")
 
 	userStore := user.NewStore(s.db)
-	userHandler := user.NewHandler(userStore)
+	dataProvider := utils.NewDataProvider(s.db)
+	userHandler := user.NewHandler(userStore, *dataProvider)
 	userHandler.RegisterRoutes(router_v1)
 
 	courseStore := course.NewStore(s.db)

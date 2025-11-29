@@ -14,11 +14,12 @@ import (
 )
 
 type Handler struct {
-	store types.UserStore
+	store        types.UserStore
+	dataProvider utils.DataProvider
 }
 
-func NewHandler(store types.UserStore) *Handler {
-	return &Handler{store: store}
+func NewHandler(store types.UserStore, dataProvider utils.DataProvider) *Handler {
+	return &Handler{store: store, dataProvider: dataProvider}
 }
 
 func (h *Handler) RegisterRoutes(router gin.IRouter) {
@@ -131,16 +132,8 @@ func (h *Handler) handleRegister(c *gin.Context) {
 		return
 	}
 
-	c.SetSameSite(http.SameSiteLaxMode)
-	c.SetCookie(
-		"auth_token",
-		token, 
-		86400,     
-		"/",       
-		"",       
-		false,  
-		true,    
-	)
+	utils.WriteJSON(c.Writer, http.StatusCreated, map[string]string{"token": token})
+}
 
   	c.JSON(http.StatusCreated, gin.H{"status": "ok"})
 }
