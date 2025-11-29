@@ -1,0 +1,44 @@
+:root {
+    --border-radius-default: 15px;
+    --border-color: #E0E4EC;
+    --border-large: 4px solid var(--border-color);
+    --border-main: 3px solid var(--border-color);
+    --border-secondary: 2px solid var(--border-color);
+    --border-small: 1px solid var(--border-color);
+}
+
+
+.border-radius-default{
+    border-radius: var(--border-radius-default);
+}
+
+.border-large{
+    border: var(--border-large);
+    border-radius: var(--border-radius-default);
+}
+
+.border-main{
+    border: var(--border-main);
+    border-radius: var(--border-radius-default);
+}
+
+.border-medium{
+    border: var(--border-secondary);
+    border-radius: var(--border-radius-default);
+}
+
+.border-small{
+    border: var(--border-small);
+    border-radius: var(--border-radius-default);
+}
+
+.border-large-bottom{
+    border-bottom: var(--border-large);
+}
+.border-large-right {
+    border-right: var(--border-large);
+}
+
+.button-primary{
+
+}

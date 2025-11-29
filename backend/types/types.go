@@ -9,6 +9,10 @@ type UserStore interface {
 	GetTests() ([]Block, error)
 }
 
+type CourseStore interface {
+	GetCoursesByUserRelatedID(userID int) ([]Course, error)
+}
+
 type User struct {
 	ID        int       `json:"id"`
 	FirstName string    `json:"firstName"`
@@ -46,9 +50,9 @@ type Score struct {
 type Course struct {
 	ID        int    `json:"id"`
 	Name      string `json:"name"`
-	Students  *[]int `json:"students"`
-	Homeworks *[]int `json:"homeworks"`
-	Steps     *[]int `json:"steps"`
+	Students  []int `json:"students"`
+	Homeworks []int `json:"homeworks"`
+	Steps     []int `json:"steps"`
 }
 
 type Step struct {
@@ -95,5 +99,5 @@ type RegisterUserPayload struct {
 
 type LoginUserPayload struct {
 	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required`
+	Password string `json:"password" validate:"required"`
 }
