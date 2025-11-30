@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/Jeno7u/studybud/config"
 	"github.com/Jeno7u/studybud/service/auth"
@@ -54,6 +55,7 @@ func (h *Handler) RegisterRoutes(router gin.IRouter) {
 		lessons.POST("/:id/image", h.uploadLessonImage)
 		lessons.POST("/:id/materials", h.uploadLessonMaterial)
 		lessons.GET("/:id/materials", h.getLessonMaterials)
+		lessons.GET("/:id/image", h.getLessonImage)
 	}
 
 	// Общие файловые операции
@@ -411,7 +413,7 @@ func (h *Handler) downloadFile(c *gin.Context) {
 	}
 
 	// Устанавливаем правильный Content-Type и заголовки для скачивания
-	contentType := getContentType(record.FileType)
+	contentType := getContentTypeByFilename(record.FileType)
 	c.Header("Content-Type", contentType)
 	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", record.Name))
 	c.Header("Content-Length", fmt.Sprintf("%d", len(fileBytes)))
@@ -451,23 +453,63 @@ func isImageFile(filename string) bool {
 	return imageExts[ext]
 }
 
-func getContentType(fileType string) string {
-	switch fileType {
-	case "image", "avatar":
+func getContentTypeByFilename(filename string) string {
+	ext := filepath.Ext(filename)
+	switch strings.ToLower(ext) {
+	case ".jpg", ".jpeg":
 		return "image/jpeg"
-	case "pdf":
+	case ".png":
+		return "image/png"
+	case ".gif":
+		return "image/gif"
+	case ".bmp":
+		return "image/bmp"
+	case ".webp":
+		return "image/webp"
+	case ".pdf":
 		return "application/pdf"
-	case "document", "text":
-		return "application/octet-stream"
-	case "video":
+	case ".doc", ".docx":
+		return "application/msword"
+	case ".xls", ".xlsx":
+		return "application/vnd.ms-excel"
+	case ".ppt", ".pptx":
+		return "application/vnd.ms-powerpoint"
+	case ".zip":
+		return "application/zip"
+	case ".mp4":
 		return "video/mp4"
-	case "audio":
+	case ".mp3":
 		return "audio/mpeg"
-	case "submission":
-		return "application/octet-stream"
+	case ".txt":
+		return "text/plain"
 	default:
 		return "application/octet-stream"
 	}
+}
+
+// Получение изображения урока
+func (h *Handler) getLessonImage(c *gin.Context) {
+	lessonID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		utils.WriteError(c.Writer, http.StatusBadRequest, fmt.Errorf("invalid lesson ID"))
+		return
+	}
+
+	record, err := h.dataProvider.GetLessonImage(lessonID)
+	if err != nil {
+		utils.WriteError(c.Writer, http.StatusNotFound, fmt.Errorf("lesson image not found"))
+		return
+	}
+
+	fileBytes, err := utils.ReadFile(record.Path)
+	if err != nil {
+		utils.WriteError(c.Writer, http.StatusInternalServerError, err)
+		return
+	}
+
+	// Определяем Content-Type по расширению файла
+	contentType := getContentTypeByFilename(record.Name)
+	c.Data(http.StatusOK, contentType, fileBytes)
 }
 
 // func getPayload(c *gin.Context) (*types.RegisterUserPayload, error) {
