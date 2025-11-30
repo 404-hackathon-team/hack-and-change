@@ -1,50 +1,54 @@
 # Репозиторий команды "404"
 
+Кратко: учебная платформа для курсов с загрузкой домашних, оценками и уведомлениями. Трек "Студент"
+
+Как запустить:
+1. Скопировать пример окружения (.env.template) и заполнить файл .env:
+
+2. Собрать и поднять все контейнеры из корня проекта:
+```bash
+docker compose up --build
+```
+
+3. Проверка работоспособности:
+    `http://localhost:3000`
+
+
 ---
 
 ## Frontend
 
-Информация о фронтенд части приложения [тут(клик)](https://github.com/404-hackathon-team/hack-and-change/blob/master/frontend/README.md)
+Основные библиотеки:
+- Frontend: Nuxt (Nitro), Bun (сборка/запуск)
 
 [Ссылка на Figma](https://www.figma.com/design/zu5ewdmESV3CU5D3vX1uDg/hackaton-2-hack-change25?node-id=5-140&p=f&t=4oCaC9mmJaqvbuj5-0)
+
+![photo_2025-11-30_05-32-09](https://github.com/user-attachments/assets/3f8818ee-9ef7-446c-9afa-5c99a3a99fbb)
+
+
+### Структура проекта:
+- `app/`>
+- `components/` - Vue компоненты, используемые в приложении.
+- `pages/` - Страницы приложения, которые автоматически маршрутизируются.
+- `assets/` - Статические файлы.
+- `composables/` - Повторно используемые функции и логика.
+- `layouts/` - Макеты страниц.
+- `app.vue` - Главный компонент приложения.
+
+## Используемые технологии:
+- [Nuxt 4](https://nuxt.com/) - Фреймворк
+- [Vue 3](https://vuejs.org/) - Фреймворк
+- [TypeScript](https://www.typescriptlang.org/) - Язык программирования
+- [UnoCSS](https://unocss.dev/) - Утилитарный CSS фреймворк
 
 ---
 
 ## Backend
 
-Создание контейнеров
-```bash
-docker-compose up --build
-```
-
-Запуск тестов
-```bash
-go test -v ./...
-```
-
-Миграция происходит при запуске сервера через goose
-
-Установка goose
-```bash
-go install github.com/pressly/goose/v3/cmd/goose@latest
-```
-
-Создать новый файл миграции 
-```
-goose create [migration_name] sql
-```
----
+- Backend: `gin` (основная библиотека для реализации http запросов), `goose` (миграция), `pgx`/`database/sql`, `github.com/golang-jwt/jwt`, `bcrypt` (хеширование), PostgreSQL (база данных)
 
 
-## Стек backend
-
-Язык программировния: GO
-
-БД: PostgresSQL
-
----
-
-## Структура
+### Структура проекта
 
 /cmd/api - инициализация REST API
 
@@ -70,7 +74,7 @@ goose create [migration_name] sql
 
 
 ## Состав команды
-1. Миронов Борис - Капитан, Backend разработчик, Devops
-2. Михаил Бунто - Backend разработчик
-3. Суслов Максим - Frontend раработчик, UI/UX
+1. Миронов Борис - Капитан, Backend разработчик, Devops [@Jeno7u](https://github.com/ms0ur)
+2. Михаил Бунто - Backend разработчик [@ms0ur](https://github.com/ms0ur)
+3. Суслов Максим - Frontend раработчик, UI/UX [@ms0ur](https://github.com/ms0ur)
 
