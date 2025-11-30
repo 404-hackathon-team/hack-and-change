@@ -1,6 +1,6 @@
 export const useApiClient = () => {
     const api = $fetch.create({
-        baseURL: '/api',
+        baseURL: '/remote/api',
     })
 
     return api

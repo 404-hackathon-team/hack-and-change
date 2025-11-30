@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@formkit/auto-animate": "^0.9.0",
+    "@iconify-json/material-symbols": "^1.2.48",
     "@nuxtjs/mdc": "^0.19.1",
     "@unocss/nuxt": "^66.5.9",
     "@vite-pwa/nuxt": "^1.1.0",

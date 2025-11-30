@@ -25,7 +25,7 @@ export default defineNuxtConfig({
     css: ['@/assets/fonts.css', '@/assets/styles.css'],
 
     routeRules: {
-        '/api/**': {
+        '/remote/api/**': {
             proxy: {
                 to: 'http://localhost:8080/api/v1/**',
             },

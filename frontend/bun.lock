@@ -18,6 +18,7 @@
       },
       "devDependencies": {
         "@formkit/auto-animate": "^0.9.0",
+        "@iconify-json/material-symbols": "^1.2.48",
         "@nuxtjs/mdc": "^0.19.1",
         "@unocss/nuxt": "^66.5.9",
         "@vite-pwa/nuxt": "^1.1.0",
@@ -329,6 +330,8 @@
     "@humanwhocodes/module-importer": ["@humanwhocodes/module-importer@1.0.1", "", {}, "sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA=="],
 
     "@humanwhocodes/retry": ["@humanwhocodes/retry@0.4.3", "", {}, "sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ=="],
+
+    "@iconify-json/material-symbols": ["@iconify-json/material-symbols@1.2.48", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-qDjqYEeNCm31tae3YbsprEklWHIoVPvqlbTuqtisNjlhHRSiXy5x+AtUq9VwjlITRU+TtqsP6jW2h+pnEUURRQ=="],
 
     "@iconify/collections": ["@iconify/collections@1.0.622", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-HMTAEh/0GdZe3XoDeelIH6St5LxmPzaWIXCBVhOXUVC6XdWILOCafimpp2SkDqDmpoqZBk9CwDHR3IPf/fXyQQ=="],
 

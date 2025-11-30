@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
+import LastLessonCard from "~/components/dashboard/LastLessonCard.vue";
+import CourseCard from "~/components/dashboard/CourseCard.vue";
 
 const { user, isAuthenticated, fetchMe } = useAuth()
 
@@ -51,7 +53,7 @@ onMounted(() => {
     <div class="grid grid-cols-12 grid-rows-[auto_2fr_3fr] gap-6 w-full h-full">
 
       <section class="col-span-8 flex items-center">
-        <h1 class="text-3xl font-bold text-text-primary">
+        <h1 class="header1 text-text-primary">
           {{ greeting }}, {{ displayName }}
         </h1>
       </section>
@@ -66,11 +68,15 @@ onMounted(() => {
       </aside>
 
       <section class="col-span-8 row-start-2">
-        <!-- last lesson card -->
+        <LastLessonCard />
       </section>
 
-      <aside class="col-span-4 row-start-2 row-span-2">
-        <!-- courses list -->
+      <aside class="col-span-4 row-start-2 row-span-2 flex flex-col items-center border-large rounded-lg py-5 px-10">
+        <h3 class="header2">Мои курсы</h3>
+        <div class="w-full">
+          <!-- course cards -->
+          <CourseCard />
+        </div>
       </aside>
 
       <section class="col-span-3 row-start-3">
