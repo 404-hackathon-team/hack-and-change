@@ -74,7 +74,7 @@ docker compose up --build
 
 
 ## Состав команды
-1. Миронов Борис - Капитан, Backend разработчик, Devops [@Jeno7u](https://github.com/ms0ur)
-2. Михаил Бунто - Backend разработчик [@ms0ur](https://github.com/ms0ur)
+1. Миронов Борис - Капитан, Backend разработчик, Devops [@Jeno7u](https://github.com/Jeno7u)
+2. Михаил Бунто - Backend разработчик [@Undeadguy0](https://github.com/Undeadguy0)
 3. Суслов Максим - Frontend раработчик, UI/UX [@ms0ur](https://github.com/ms0ur)
 
