@@ -2,6 +2,11 @@
 
 Это веб приложение разработано с использованием Nuxt 4.
 
+[Ссылка на Figma](https://www.figma.com/design/zu5ewdmESV3CU5D3vX1uDg/hackaton-2-hack-change25?node-id=5-140&p=f&t=4oCaC9mmJaqvbuj5-0)
+
+![photo_2025-11-30_05-32-09](https://github.com/user-attachments/assets/3f8818ee-9ef7-446c-9afa-5c99a3a99fbb)
+
+
 ## Структура проекта:
 - `app/`>
 - `components/` - Vue компоненты, используемые в приложении.
@@ -27,4 +32,7 @@
 - `bun run build` - Собрать проект для продакшена
 
 - `docker compose up --build` - Собрать и запустить проект в Docker контейнере (порт 3000)
+
+
+Фронтенд часть и UI/UX полностью разработаны [@ms0ur](https://github.com/ms0ur)
 
