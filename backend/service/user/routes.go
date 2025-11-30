@@ -29,7 +29,7 @@ func (h *Handler) RegisterRoutes(router gin.IRouter) {
 	// Аутентификация
 	router.POST("/login", h.handleLogin)
 	router.POST("/register", h.handleRegister)
-	//router.GET("/me", auth.AuthMiddleware(), h.handleMe)
+	router.GET("/me", auth.AuthMiddleware(), h.handleMe)
 
 	// Тесты
 	router.GET("/get_tests", h.getTests)
@@ -173,6 +173,16 @@ func (h *Handler) handleRegister(c *gin.Context) {
 	utils.WriteJSON(c.Writer, http.StatusCreated, map[string]string{"token": token})
 
 	c.JSON(http.StatusCreated, gin.H{"status": "ok"})
+}
+
+func (h *Handler) handleMe(c *gin.Context) {
+	userID := c.GetInt("user_id")
+	u, err := h.store.GetUserById(userID)
+	if err != nil {
+		utils.WriteError(c.Writer, http.StatusBadRequest, fmt.Errorf("user not found"))
+		return
+	}
+	c.JSON(http.StatusOK, u)
 }
 
 func (h *Handler) getTests(c *gin.Context) {
