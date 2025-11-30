@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav class="flex flex-row justify-around border-large-bottom fixed w-full items-center">
+    <nav class="flex flex-row justify-around border-large-bottom fixed w-full items-center bg-surface z-36">
       <NuxtLink to="/">
         <h2 class="header1 text-primary">
           EduApp

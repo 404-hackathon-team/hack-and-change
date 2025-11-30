@@ -18,6 +18,7 @@
     "eslint": "^9.0.0",
     "gzip-size": "^7.0.0",
     "nuxt": "^4.2.1",
+    "ofetch": "^1.5.1",
     "vite-tsconfig-paths": "^5.1.4",
     "vue": "^3.5.25",
     "vue-router": "^4.6.3"
