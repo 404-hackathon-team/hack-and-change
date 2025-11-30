@@ -54,39 +54,38 @@ type Score struct {
 }
 
 type Course struct {
-	ID        int    `json:"id"`
-	Name      string `json:"name"`
-	Students  []int  `json:"students"`
-	Homeworks []int  `json:"homeworks"`
-	Steps     []int  `json:"steps"`
+	ID        	int    `json:"id"`
+	Name      	string `json:"name"`
+	Students  	[]int `json:"students"`
+	Homeworks 	int `json:"homeworks"`
+	Categories     []int `json:"categories"`
 }
 
-type Step struct {
+type Categories struct {
 	ID      int    `json:"id"`
-	Courses *[]int `json:"courses"`
-	UsersAt *[]int `json:"usersAt"`
+	Lessons []int `json:"lessons"`
+	Name 	string `json:"name"`
 }
 
 type Homework struct {
 	ID        int       `json:"id"`
-	Text      *string   `json:"text"`
+	Text	  string   `json:"text"`
 	CreatedAt time.Time `json:"createdAt"`
 	StartsAt  time.Time `json:"startsAt"`
 	EndsAt    time.Time `json:"endsAt"`
-	Files     *[]int    `json:"files"`
+	Files     []int    `json:"files"`
 }
 
 type Lesson struct {
 	ID          int       `json:"id"`
 	Teacher     int       `json:"teacher"`
-	Text        *string   `json:"text"`
-	Blocks      *[]int    `json:"blocks"`
+	Text        string   `json:"text"`
 	CreatedAt   time.Time `json:"createdAt"`
-	Image       *int      `json:"image"`
+	steps 	 	[]int		`json:"steps"`
+	Image       int      `json:"image"`
 	Name        string    `json:"name"`
 	UsersPassed []int     `json:"usersPassed"`
 }
-
 type Block struct {
 	ID   int    `json:"id"`
 	Type string `json:"type"`
