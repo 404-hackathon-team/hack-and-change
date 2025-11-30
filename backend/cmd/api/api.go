@@ -18,6 +18,7 @@ type APIServer struct {
 }
 
 func NewAPIServer(addr string, db *sql.DB) *APIServer {
+	gin.SetMode(gin.ReleaseMode)
 	return &APIServer{addr: addr, db: db}
 }
 
