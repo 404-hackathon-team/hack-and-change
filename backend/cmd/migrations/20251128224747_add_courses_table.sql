@@ -10,14 +10,13 @@ CREATE TABLE IF NOT EXISTS courses (
      PRIMARY KEY("id")
 );
 
-INSERT INTO courses (name, students, homeworks, steps) 
+INSERT INTO courses (name, students, homework, categories, image) 
 VALUES 
     ('Course1', '{1}', 1, '{1, 2, 3}', 2),
     ('Course1', '{1, 2}', 2, '{1, 2, 3}', 1),
     ('Course1', '{2}', 3, '{1, 2, 3}', 3);
 
 
--- +goose StatementEnd
 
 -- +goose Down
 DROP TABLE IF EXISTS courses;

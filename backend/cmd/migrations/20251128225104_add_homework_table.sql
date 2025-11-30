@@ -9,5 +9,11 @@ CREATE TABLE IF NOT EXISTS homework (
 	PRIMARY KEY("id")
 );
 
+INSERT INTO homework (text, "createdAt", "startsAt", "endsAt", files)
+VALUES
+	('homework1', CURRENT_DATE - INTERVAL '2 days', CURRENT_DATE, CURRENT_DATE + INTERVAL '2 days', '{1, 2}'),
+	('homework2', CURRENT_DATE - INTERVAL '1 days', CURRENT_DATE - INTERVAL '1 days', CURRENT_DATE + INTERVAL '1 days', '{1, 2}'),
+	('homework3', CURRENT_DATE - INTERVAL '4 days', CURRENT_DATE - INTERVAL '1 days', CURRENT_DATE + INTERVAL '5 days', '{1, 2}');
+
 -- +goose Down
 DROP DATABASE IF EXISTS homework;

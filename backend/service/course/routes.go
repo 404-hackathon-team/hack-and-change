@@ -1,11 +1,13 @@
 package course
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 
 	"github.com/Jeno7u/studybud/service/auth"
 	"github.com/Jeno7u/studybud/types"
+	"github.com/Jeno7u/studybud/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,8 +28,18 @@ func (h *Handler) handleCourse(c *gin.Context) {
 
 	courses, err := h.store.GetCoursesByUserRelatedID(userID)
 	if err != nil {
+		// treat "no rows" as empty result and return {}
+		if err == sql.ErrNoRows {
+			c.JSON(http.StatusOK, gin.H{})
+			return
+		}
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, err)
+		utils.WriteError(c.Writer, http.StatusBadRequest, err)
+		return
+	}
+
+	if len(courses) == 0 {
+		c.JSON(http.StatusOK, gin.H{})
 		return
 	}
 

@@ -11,5 +11,11 @@ CREATE TABLE IF NOT EXISTS "lessons" (
      PRIMARY KEY("id")
 );
 
+INSERT INTO "lessons" ("teacher", "text", "createdAt", "steps", "image", "name", "usersPassed")
+VALUES
+  (1, 'Intro lesson text', now(), '{1,2}'::integer[], 1, 'Intro to Go', '{1}'::integer[]),
+  (2, 'Second lesson text', now(), '{3}'::integer[], 2, 'Advanced topics', '{1,2}'::integer[]);
+
+
 -- +goose Down
 DROP TABLE IF EXISTS lessons;

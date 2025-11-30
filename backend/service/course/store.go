@@ -2,7 +2,6 @@ package course
 
 import (
 	"database/sql"
-	"log"
 	"strconv"
 	"strings"
 
@@ -51,7 +50,6 @@ func parsePGIntArray(s sql.NullString) ([]int, error) {
 func scanRowIntoCourse(rows *sql.Rows) (*types.Course, error) {
 	var (
 		studentsStr  sql.NullString
-		homeworksStr sql.NullString
 		categoriesStr     sql.NullString
 	)
 
@@ -61,7 +59,7 @@ func scanRowIntoCourse(rows *sql.Rows) (*types.Course, error) {
 		&course.ID,
 		&course.Name,
 		&studentsStr,
-		&homeworksStr,
+		&course.Homework,
 		&categoriesStr,
 	)
 	if err != nil {
@@ -75,12 +73,6 @@ func scanRowIntoCourse(rows *sql.Rows) (*types.Course, error) {
 		return nil, err
 	}
 
-	if homeworks, err := parsePGIntArray(homeworksStr); err == nil {
-		course.Homeworks = homeworks
-	} else {
-		return nil, err
-	}
-
 	if categories, err := parsePGIntArray(categoriesStr); err == nil {
 		course.Categories = categories
 	} else {
@@ -90,15 +82,14 @@ func scanRowIntoCourse(rows *sql.Rows) (*types.Course, error) {
 	return course, nil
 }
 
-func (s *Store) GetCoursesByUserRelatedID(userID int) ([]types.Course, error) {
+func (s *Store) GetCoursesByUserRelatedID(userID int) ([]types.CoursesInfo, error) {
 
 	// получение основной информации о курсах принадлежащих пользователю
 	rows, err := s.db.Query(`
-		SELECT id, name, students, homeworks, categories
+		SELECT id, name, students, homework, categories
 		FROM courses
 		WHERE $1 = ANY(students);
 	`, userID)
-
 	if err != nil {
 		return nil, err
 	}
@@ -119,50 +110,57 @@ func (s *Store) GetCoursesByUserRelatedID(userID int) ([]types.Course, error) {
 	}
 
 	// получение статистики по курсу
-	var result [](map[string]string )
+	var result []types.CoursesInfo
 	for _, course := range courses {
-		lessonsAmount, passedAmount, err := s.amountOfLessonsInCourse(result, userID)
+		lessonsAmount, passedAmount, err := s.amountOfLessonsInCourse(course, userID)
 		if err != nil {
 			return nil, err
 		}
-		var courseInfo map[string]string = {
-			"id": course.id,
-			"title": course.name,
-			"lessonsDone": passedAmount,
-			"lessonsTotal": lessonsAmount,
-			"deadlineDate": homeworkDeadline(course.id)
-			"notificatinosCount": 2
-			"lastUpdate": "20.11.25"
+
+		homeworkDeadline, err := s.homeworkDeadline(course)
+		if err != nil {
+			return nil, err
 		}
-	}
-	lessonsAmount, passedAmount, err := s.amountOfLessonsInCourse(result, userID)
-	if err != nil {
-		return nil, err
+
+		courseInfo := types.CoursesInfo{
+			ID: course.ID,
+			Title: course.Name,
+			LessonsDone: passedAmount,
+			LessonsTotal: lessonsAmount,
+			DeadlineDate: homeworkDeadline,
+			NotificationsCount: 2,
+			LastUpdate: "20.11.25",
+		}
+
+		result = append(result, courseInfo)
 	}
 
 	return result, nil
 }
 
 // получение кол-ва уроков в курсе
-func (s *Store)  amountOfLessonsInCourse(course type.Course, userID int) (int, int, error) {
+func (s *Store)  amountOfLessonsInCourse(course types.Course, userID int) (int, int, error) {
 	var count int
 	var countPassed int
 
-	courseID := course.id
+	courseID := course.ID
 
 	rows, err := s.db.Query(`
 		SELECT categories FROM courses 
-		WHERE id == $1
+		WHERE id = $1
 	`, courseID)
 	if err != nil {
-		return -1, err
+		return -1, -1, err
 	}
 
 	var categoriesStr sql.NullString
 	rows.Scan(
 		&categoriesStr,
 	)
-	categories := parsePGIntArray(categoriesStr)
+	categories, err := parsePGIntArray(categoriesStr)
+	if err != nil {
+		return -1, -1, err
+	}
 
 	for _, categorieID := range categories {
 		// get lessonsCount
@@ -183,45 +181,47 @@ func (s *Store)  amountOfLessonsInCourse(course type.Course, userID int) (int, i
 
 		var lessons []int
 
-		err := s.db.QueryRow(`
+		err = s.db.QueryRow(`
 			SELECT lessons FROM categories 
-			WHERE id == $1 
+			WHERE id = $1 
 		`, categorieID).Scan(&lessons)
 		if err != nil {
 			return -1, -1, err
 		}
 
-		for _, lessonID := lessons {
+		for _, lessonID := range lessons {
 			var passed bool
 			s.db.QueryRow(`
 				SELECT id IS NOT NULL FROM lessons 
 				WHERE id = $1 AND $2 = ANY(usersPassed);
 			`, lessonID, userID).Scan(&passed)
 			
-			countPassed += int(passed)
+			if passed {
+				passedLessons++
+			}
 		}
 	}
 
 	return count, countPassed, nil
 }
 
-func (s *Store) homeworkDeadline(course type.Course) (string, error) {
+func (s *Store) homeworkDeadline(course types.Course) (string, error) {
 	var homeworkID int
 
 	err := s.db.QueryRow(`
-		SELECT homeworks FROM courses 
+		SELECT homework FROM courses 
 		WHERE id = $1;
-	`, course.id).Scan(&homework)
+	`, course.ID).Scan(&homeworkID)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	var deadlineDate string
-	err := s.db.QueryRow(`
-		SELECT to_char(endsAt, 'DD-MM-YY') FROM homework 
+	err = s.db.QueryRow(`
+		SELECT to_char("endsAt", 'DD-MM-YY') FROM homework 
 		WHERE id = $1;
 	`, homeworkID).Scan(&deadlineDate)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	return deadlineDate, nil

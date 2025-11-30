@@ -1,6 +1,10 @@
 package types
 
-import "time"
+import (
+	"time"
+
+	"github.com/gorilla/websocket"
+)
 
 type UserStore interface {
 	GetUserByEmail(email string) (*User, error)
@@ -16,7 +20,12 @@ type UserStore interface {
 }
 
 type CourseStore interface {
-	GetCoursesByUserRelatedID(userID int) ([]Course, error)
+	// returns summarized course info for the user (includes stats)
+	GetCoursesByUserRelatedID(userID int) ([]CoursesInfo, error)
+}
+
+type NotificationStore interface {
+
 }
 
 type User struct {
@@ -57,7 +66,7 @@ type Course struct {
 	ID        	int    `json:"id"`
 	Name      	string `json:"name"`
 	Students  	[]int `json:"students"`
-	Homeworks 	int `json:"homeworks"`
+	Homework	int `json:"homeworks"`
 	Categories     []int `json:"categories"`
 }
 
@@ -81,7 +90,7 @@ type Lesson struct {
 	Teacher     int       `json:"teacher"`
 	Text        string   `json:"text"`
 	CreatedAt   time.Time `json:"createdAt"`
-	steps 	 	[]int		`json:"steps"`
+	Steps      []int    `json:"steps"`
 	Image       int      `json:"image"`
 	Name        string    `json:"name"`
 	UsersPassed []int     `json:"usersPassed"`
@@ -119,4 +128,27 @@ type CategoryWithLessons struct {
 type LoginUserPayload struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
+}
+
+type CoursesInfo struct {
+	ID int `json:"id"`
+	Title string `json:"title"`
+	LessonsDone int `json:"lessonsDone"`
+	LessonsTotal int `json:"lessonsTotal"`
+	DeadlineDate string `json:"deadlineDate"`
+	NotificationsCount int `json:"notificationsCount"`
+	LastUpdate string `json:"lastUpdate"`
+}
+
+type Client struct {
+    UserID string
+    Conn   *websocket.Conn
+}
+
+type Notification struct {
+	ID int `json:"id"`
+	Type string `json:"type"`
+	Date string `json:"date"`
+	DayOfWeek string `json:"dayOfWeek"`
+	Title string  `json:"title"`
 }

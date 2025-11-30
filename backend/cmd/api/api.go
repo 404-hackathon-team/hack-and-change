@@ -2,10 +2,12 @@ package api
 
 import (
 	"database/sql"
-	"github.com/Jeno7u/studybud/utils"
 	"log"
 
+	"github.com/Jeno7u/studybud/utils"
+
 	"github.com/Jeno7u/studybud/service/course"
+	"github.com/Jeno7u/studybud/service/notification"
 	"github.com/Jeno7u/studybud/service/user"
 	"github.com/gin-gonic/gin"
 )
@@ -32,6 +34,11 @@ func (s *APIServer) Run() error {
 	courseStore := course.NewStore(s.db)
 	courseHandler := course.NewHandler(courseStore)
 	courseHandler.CourseRoutes(router_v1)
+
+	notificationStore := notification.NewStore(s.db)
+	notificationHandler := notification.NewHandler(notificationStore)
+	notificationHandler.NotificationRoutes(router_v1)
+	go notificationStore.BroadcastNotifications()
 
 	log.Println("Listening on", s.addr)
 	return router.Run(s.addr)
