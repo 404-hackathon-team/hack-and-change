@@ -2,7 +2,13 @@
 
 ---
 
-# Backend
+## Frontend
+
+Информация о фронтенд части приложения [тут(клик)](https://github.com/404-hackathon-team/hack-and-change/blob/master/frontend/README.md)
+
+---
+
+## Backend
 
 Создание контейнеров
 ```bash
