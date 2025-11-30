@@ -95,3 +95,105 @@ func (s *Store) GetTests() ([]types.Block, error) {
 
 	return blocks, nil
 }
+
+// Получение урока по ID
+func (s *Store) GetLessonByID(lessonID int) (*types.Lesson, error) {
+	var lesson types.Lesson
+	err := s.db.QueryRow(`
+        SELECT id, teacher, text, createdAt, steps, image, name, "usersPassed"
+        FROM lessons
+        WHERE id = $1
+    `, lessonID).Scan(
+		&lesson.ID,
+		&lesson.Teacher,
+		&lesson.Text,
+		&lesson.CreatedAt,
+		&lesson.Image,
+		&lesson.Name,
+		&lesson.UsersPassed,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &lesson, nil
+}
+
+// Получение всех категорий
+func (s *Store) GetAllCategories() ([]types.Category, error) {
+	rows, err := s.db.Query(`
+        SELECT id, lessons, name
+        FROM categories
+        ORDER BY name
+    `)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []types.Category
+	for rows.Next() {
+		var category types.Category
+		err := rows.Scan(&category.ID, &category.Lessons, &category.Name)
+		if err != nil {
+			return nil, err
+		}
+		categories = append(categories, category)
+	}
+
+	return categories, nil
+}
+
+func (s *Store) GetLessonsByCategory(categoryID int) ([]types.Lesson, error) {
+	rows, err := s.db.Query(`
+        SELECT id, teacher, text, "createdAt", steps, image, name, "usersPassed"
+        FROM lessons 
+        WHERE id IN (
+            SELECT unnest(lessons) FROM categories WHERE id = $1
+        )
+        ORDER BY "createdAt" DESC
+    `, categoryID)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var lessons []types.Lesson
+	for rows.Next() {
+		var lesson types.Lesson
+		err := rows.Scan(
+			&lesson.ID,
+			&lesson.Teacher,
+			&lesson.Text,
+			&lesson.CreatedAt,
+			&lesson.Image,
+			&lesson.Name,
+			&lesson.UsersPassed,
+		)
+		if err != nil {
+			return nil, err
+		}
+		lessons = append(lessons, lesson)
+	}
+
+	return lessons, nil
+}
+
+// Получение категории по ID
+func (s *Store) GetCategoryByID(categoryID int) (*types.Category, error) {
+	var category types.Category
+	err := s.db.QueryRow(`
+        SELECT id, lessons, name
+        FROM categories
+        WHERE id = $1
+    `, categoryID).Scan(&category.ID, &category.Lessons, &category.Name)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &category, nil
+}

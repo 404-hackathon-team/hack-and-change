@@ -58,6 +58,11 @@ func (h *Handler) RegisterRoutes(router gin.IRouter) {
 		lessons.GET("/:id/image", h.getLessonImage)
 	}
 
+	categories := router.Group("/categories", auth.AuthMiddleware())
+	{
+		categories.GET("/:id/lessons", h.getCategoryLessons)
+	}
+
 	// Общие файловые операции
 	router.GET("/files/:id/download", h.downloadFile)
 	router.DELETE("/files/:id", auth.AuthMiddleware(), h.deleteFile)
@@ -413,7 +418,7 @@ func (h *Handler) downloadFile(c *gin.Context) {
 	}
 
 	// Устанавливаем правильный Content-Type и заголовки для скачивания
-	contentType := getContentTypeByFilename(record.FileType)
+	contentType := getContentType(record.FileType)
 	c.Header("Content-Type", contentType)
 	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", record.Name))
 	c.Header("Content-Length", fmt.Sprintf("%d", len(fileBytes)))
@@ -510,6 +515,47 @@ func (h *Handler) getLessonImage(c *gin.Context) {
 	// Определяем Content-Type по расширению файла
 	contentType := getContentTypeByFilename(record.Name)
 	c.Data(http.StatusOK, contentType, fileBytes)
+}
+
+func (h *Handler) getCategoryLessons(c *gin.Context) {
+	categoryID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid category ID"})
+		return
+	}
+
+	lessons, err := h.store.GetLessonsByCategory(categoryID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"lessons": lessons,
+		"count":   len(lessons),
+	})
+}
+
+func getContentType(filename string) string {
+	ext := filepath.Ext(filename)
+	switch strings.ToLower(ext) {
+	case ".jpg", ".jpeg":
+		return "image/jpeg"
+	case ".png":
+		return "image/png"
+	case ".gif":
+		return "image/gif"
+	case ".pdf":
+		return "application/pdf"
+	case ".mp4":
+		return "video/mp4"
+	case ".mp3":
+		return "audio/mpeg"
+	case ".txt":
+		return "text/plain"
+	default:
+		return "application/octet-stream"
+	}
 }
 
 // func getPayload(c *gin.Context) (*types.RegisterUserPayload, error) {

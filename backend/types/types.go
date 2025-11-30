@@ -5,8 +5,14 @@ import "time"
 type UserStore interface {
 	GetUserByEmail(email string) (*User, error)
 	GetUserById(id int) (*User, error)
-	CreateUser(User) error
+	CreateUser(user User) error
 	GetTests() ([]Block, error)
+
+	// Новые методы для уроков и категорий
+	GetLessonsByCategory(categoryID int) ([]Lesson, error)
+	GetCategoryByID(categoryID int) (*Category, error)
+	GetLessonByID(lessonID int) (*Lesson, error)
+	GetAllCategories() ([]Category, error)
 }
 
 type CourseStore interface {
@@ -50,9 +56,9 @@ type Score struct {
 type Course struct {
 	ID        int    `json:"id"`
 	Name      string `json:"name"`
-	Students  []int `json:"students"`
-	Homeworks []int `json:"homeworks"`
-	Steps     []int `json:"steps"`
+	Students  []int  `json:"students"`
+	Homeworks []int  `json:"homeworks"`
+	Steps     []int  `json:"steps"`
 }
 
 type Step struct {
@@ -71,11 +77,14 @@ type Homework struct {
 }
 
 type Lesson struct {
-	ID        int       `json:"id"`
-	Teacher   int       `json:"teacher"`
-	Text      *string   `json:"text"`
-	Blocks    *[]int    `json:"blocks"`
-	CreatedAt time.Time `json:"createdAt"`
+	ID          int       `json:"id"`
+	Teacher     int       `json:"teacher"`
+	Text        *string   `json:"text"`
+	Blocks      *[]int    `json:"blocks"`
+	CreatedAt   time.Time `json:"createdAt"`
+	Image       *int      `json:"image"`
+	Name        string    `json:"name"`
+	UsersPassed []int     `json:"usersPassed"`
 }
 
 type Block struct {
@@ -95,6 +104,17 @@ type RegisterUserPayload struct {
 	LastName  string `json:"lastName" validate:"required"`
 	Email     string `json:"email" validate:"required,email"`
 	Password  string `json:"password" validate:"required,min=3,max=72"`
+}
+
+type Category struct {
+	ID      int    `json:"id"`
+	Lessons []int  `json:"lessons"`
+	Name    string `json:"name"`
+}
+
+type CategoryWithLessons struct {
+	Category Category `json:"category"`
+	Lessons  []Lesson `json:"lessons"`
 }
 
 type LoginUserPayload struct {
